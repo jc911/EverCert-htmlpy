@@ -5,3 +5,4 @@
     pip install htmlPy
     pip install PySide
     pip install jinja2
+    pip install requests

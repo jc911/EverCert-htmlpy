@@ -1,9 +1,60 @@
 <html>
-  <body>
-    <a
-    href="BackEnd.say_hello_world"
-    data-bind="true">
-      Click to say "Hello, world"
-    </a>
-  </body>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Language" content="zh-cn" />
+	<title>处置-验证工具</title>
+	<style>
+		/*浮动*/
+		.left {float:left;}
+		.right {float:right;}
+		.clearfix:after {visibility: hidden; display: block; clear: both; height: 0; font-size: 0; content: ".";}
+		.clearfix{zoom:1;}
+		div {
+			border:1px dashed gray;
+		}
+
+
+
+
+
+	</style>
+	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+</head>
+	<body>
+		<a
+		href="BackEnd.say_hello_world"
+		data-bind="true">
+		Click to say "Hello, world"
+		</a>
+		<div>
+			<form action="BackEnd.login" data-bind="true">
+				用户名：<input name="userName" value="{{ userName }}"/>
+				密码：<input type="password" name="passWord" value="{{ passWord }}"/>
+				<input type="submit" value="Login"/>
+
+			</form>
+			<div>登录状态：{{ login_state }}</div>
+
+
+
+		</div>
+	</body>
+<script>
+
+<!--$("button").click(function(){-->
+	<!--$.post("http://202.108.212.74:8000/cnvd_admin/login/loginCheck",-->
+	<!--{-->
+		<!--userName:"1",-->
+		<!--passWord:"2",-->
+		<!--imagex:"32",-->
+		<!--imagey:"17"-->
+	<!--},-->
+	<!--function(data,status){-->
+		<!--alert("Data: " + data + "\nStatus: " + status);-->
+	<!--});-->
+<!--});-->
+
+
+
+</script>
 </html>

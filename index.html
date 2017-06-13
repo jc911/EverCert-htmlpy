@@ -21,10 +21,8 @@
 	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
 </head>
 	<body>
-		<a
-		href="BackEnd.say_hello_world"
-		data-bind="true">
-		Click to say "Hello, world"
+		<a href="BackEnd.say_hello_world" data-bind="true">
+			Click to say "Hello, world"
 		</a>
 		<div>
 			<form action="BackEnd.login" data-bind="true">
@@ -36,6 +34,19 @@
 			<div>登录状态：{{ login_state }}</div>
 
 
+
+		</div>
+		<div><a href="BackEnd.getCookie" data-bind="true">获取cookie</a></div>
+		<div>
+			<div>
+				<a href="BackEnd.firstExamineList" data-bind="true">一级审核</a>
+			</div>
+			<div>
+				{% for cnvd_bianhao in cnvd_bianhaos %}
+				<td>{{ cnvd_bianhao }}</td>
+				{% endfor %}
+
+			</div>
 
 		</div>
 	</body>

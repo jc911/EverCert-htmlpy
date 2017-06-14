@@ -42,7 +42,9 @@ class BackEnd(htmlPy.Object):
 				login_state = 'Cookie: '+r.cookies['JSESSIONID']
 				return r.cookies
 		except BaseException, e:
-			login_state = e
+			login_state = e.__class__.__name__
+			print(type(login_state))
+			print(login_state)
 		finally:
 			#self.app.template.render(login_state="test")
 			self.app.template = ("index.html", {"login_state": login_state,"userName":userName,"passWord":passWord})
@@ -60,7 +62,7 @@ class BackEnd(htmlPy.Object):
 
 	@htmlPy.Slot()
 	def firstExamineList(self):
-		if getCookie != "null":
+		if self.getCookie() != "null":
 			try:
 				r = requests.post("http://202.108.212.74:8000/cnvd_admin/login/loginCheck", allow_redirects=False,
 								  data=payload, proxies=proxies, timeout=3)

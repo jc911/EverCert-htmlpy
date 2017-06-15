@@ -1,9 +1,16 @@
+import os
 import htmlPy
-from back_end import BackEnd
+#from PyQt4 import QtGui
 
-app = htmlPy.AppGUI()
-app.maximized = False
-app.template_path = "."
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+app = htmlPy.AppGUI(title=u"Application", maximized=False, plugins=True, developer_mode=True)
+
+app.static_path = os.path.join(BASE_DIR, "static/")
+app.template_path = os.path.join(BASE_DIR)
+
+
+
+from back_end import BackEnd
 app.bind(BackEnd(app))
 
 app.template = ("index.html", {})

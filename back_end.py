@@ -1,3 +1,4 @@
+# coding:utf-8
 import htmlPy
 import requests
 import json
@@ -12,6 +13,7 @@ class BackEnd(htmlPy.Object):
 	def say_hello_world(self):
 		self.app.html = u"Hello, world"
 
+	#登录模块
 	@htmlPy.Slot(str, result=str)
 	def login(self, json_str):
 		print(json_str)
@@ -40,6 +42,8 @@ class BackEnd(htmlPy.Object):
 				print('login success')
 				print(r.cookies['JSESSIONID'])
 				login_state = 'Cookie: '+r.cookies['JSESSIONID']
+				#使cookie生效
+				requests.get(r.headers['Location'], cookies=r.cookies, allow_redirects=False, proxies=proxies, timeout=3)
 				return r.cookies
 		except BaseException, e:
 			login_state = e.__class__.__name__
@@ -60,40 +64,66 @@ class BackEnd(htmlPy.Object):
 		print(Cookie)
 		return Cookie
 
+	#一级审核
 	@htmlPy.Slot()
 	def firstExamineList(self):
 		if self.getCookie() != "null":
-			try:
-				r = requests.post("http://202.108.212.74:8000/cnvd_admin/login/loginCheck", allow_redirects=False,
-								  data=payload, proxies=proxies, timeout=3)
-				print(r.text)
-				print(r.status_code)
-				print(r.headers['Location'])
-				if r.status_code == 302 and r.headers[
-					'Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
-					print('login failed')
-					login_state = 'login failed'
-				if r.status_code == 302 and r.headers[
-					'Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginSuccess':
-					print('login success')
-					print(r.cookies['JSESSIONID'])
-					login_state = 'Cookie: ' + r.cookies['JSESSIONID']
-					return r.cookies
-			except BaseException, e:
-				login_state = e
-			finally:
-				# self.app.template.render(login_state="test")
-				self.app.template = (
-				"index.html", {"login_state": login_state, "userName": userName, "passWord": passWord})
+			pass
 
 		cnvd_bianhaos={
 			123,321,111,222,333
 		}
+		#更新template
 		template_dic = self.app.template[1]
 		print(template_dic)
 		template_dic['cnvd_bianhaos'] = cnvd_bianhaos
 		print(template_dic)
 		self.app.template = ("index.html", template_dic)
 
-		#http://202.108.212.74:8000/cnvd_admin/flaw/firstExamineList
+		#
+	#二级审核
+	@htmlPy.Slot()
+	def secondExamineList(self):
+		payload = {
+			'number':'',
+			'title':'',
+			'storageTimeStartStr':'',
+			'storageTimeEndStr':'',
+			'serverityId':'',
+			'causeId':'',
+			'threadId':'',
+			'positionId':'',
+			'softStyleId':'',
+			'isv':'',
+			'ivp':'',
+		}
+		cookie = self.getCookie()
+		cookies = {'JSESSIONID':cookie}
+		proxies = {"http":"http://127.0.0.1:8081"}
+		login_state = self.app.template[1]['login_state']
+		if self.getCookie() != "null":
+			try:
+				r = requests.post("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineList", allow_redirects=False, cookies=cookies, data=payload, proxies=proxies, timeout=3)
+				print(r.text)
+				print(r.status_code)
+
+				if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
+					print('login failed')
+					login_state = 'login failed'
+				if r.status_code == 200 :
+					print(r.text)
+			except BaseException, e:
+				login_state = e.__class__.__name__
+				print('except:',e)
+				print(login_state)
+			finally:
+				#更新template
+				template_dic = self.app.template[1]
+				#template_dic['cnvd_bianhaos'] = cnvd_bianhaos
+				template_dic['login_state'] = login_state
+				self.app.template = ("index.html", template_dic)
+				#刷新js
+				self.app.evaluate_javascript("$('div.content1').hide();$('div#erjishenhe').show();")
+
+
 

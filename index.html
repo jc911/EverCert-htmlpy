@@ -18,7 +18,8 @@
 
 
 	</style>
-	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="static/jquery-3.2.1.min.js"></script>
+	<script src="{{ 'jquery-3.2.1.min.js'|staticfile }}"></script>
 </head>
 	<body>
 		<a href="BackEnd.say_hello_world" data-bind="true">
@@ -39,12 +40,46 @@
 		<div><a href="BackEnd.getCookie" data-bind="true">获取cookie</a></div>
 		<div>
 			<div>
-				<a href="BackEnd.firstExamineList" data-bind="true">一级审核</a>
+
+				<a href="#" id="yijishenhe">一级审核</a>
+				<a href="#" id="erjishenhe">二级审核</a>
+				<a href="#" id="sanjishenhe">三级审核（快速核验）</a>
+				<a href="#" id="farenwu">发任务</a>
+				<a href="#" id="yanzhengrenwu">验证任务</a>
+				<a href="#" id="chuzhirenwu">处置任务</a>
+				<a href="#" id="liyong">利用任务（特征提取）</a>
+
 			</div>
-			<div>
-				{% for cnvd_bianhao in cnvd_bianhaos %}
-				    <td>{{ cnvd_bianhao }}</td>
-				{% endfor %}
+			<div class="content1" id="yijishenhe">
+				<div>
+					搜索选项
+					<a href="BackEnd.firstExamineList"></a>
+				</div>
+				<div>
+					一级审核内容
+					{% for cnvd_bianhao in cnvd_bianhaos %}
+						<td>{{ cnvd_bianhao }}</td>
+					{% endfor %}
+
+				</div>
+
+
+
+			</div>
+
+			<div class="content1" id="erjishenhe">
+				<div>
+					搜索选项
+					<a href="BackEnd.secondExamineList" data-bind="true">检索</a>
+				</div>
+				<div>
+					二级审核内容
+					{% for cnvd_bianhao_2 in cnvd_bianhaos_2 %}
+						<td>{{ cnvd_bianhao_2 }}</td>
+					{% endfor %}
+
+				</div>
+
 
 			</div>
 
@@ -52,20 +87,10 @@
 	</body>
 <script>
 
-<!--$("button").click(function(){-->
-	<!--$.post("http://202.108.212.74:8000/cnvd_admin/login/loginCheck",-->
-	<!--{-->
-		<!--userName:"1",-->
-		<!--passWord:"2",-->
-		<!--imagex:"32",-->
-		<!--imagey:"17"-->
-	<!--},-->
-	<!--function(data,status){-->
-		<!--alert("Data: " + data + "\nStatus: " + status);-->
-	<!--});-->
-<!--});-->
 
-
+$("a#yijishenhe").click(function(){$('div.content1').hide();$('div#yijishenhe').show();return false;});
+$("a#erjishenhe").click(function(){$('div.content1').hide();$('div#erjishenhe').show();return false;});
+$("a#sanjishenhe").click(function(){$('div.content1').hide();$('div#sanjishenhe').show();return false;});
 
 </script>
 </html>

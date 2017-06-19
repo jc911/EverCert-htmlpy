@@ -1,3 +1,4 @@
+# coding:utf-8
 import os
 import htmlPy
 #from PyQt4 import QtGui
@@ -12,8 +13,11 @@ app.template_path = os.path.join(BASE_DIR)
 
 from back_end import BackEnd
 app.bind(BackEnd(app))
-
-app.template = ("index.html", {})
+#app.template = ("index.html", {})
+# 初始化template
+template_dic = {}
+template_dic['login_state'] = ''
+app.template = ("index.html", template_dic)
 
 if __name__ == "__main__":
 	app.start()

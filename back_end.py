@@ -56,11 +56,15 @@ class BackEnd(htmlPy.Object):
 	@htmlPy.Slot()
 	def getCookie(self):
 		#print(self.app.html)
-		Cookie = "null"
 		print(self.app.template)
-		login_state = self.app.template[1]['login_state']
-		if re.search(r'Cookie: (.*)',login_state) != None:
-			Cookie = re.search(r'Cookie: (.*)',login_state).group(1)
+		try:
+			login_state = self.app.template[1]['login_state']
+			if re.search(r'Cookie: (.*)',login_state) != None:
+				Cookie = re.search(r'Cookie: (.*)',login_state).group(1)
+			else:
+				Cookie = "null"
+		except:
+			Cookie = "null"
 		print(Cookie)
 		return Cookie
 
@@ -80,7 +84,38 @@ class BackEnd(htmlPy.Object):
 		print(template_dic)
 		self.app.template = ("index.html", template_dic)
 
-		#
+
+	def post_query(self, url, payload):
+		cookie = self.getCookie()
+		cookies = {'JSESSIONID': cookie}
+		proxies = {
+			#"http": "http://127.0.0.1:8081"
+			}
+		login_state = self.app.template[1]['login_state']
+		if cookie != "null":
+			try:
+				r = requests.post(url, allow_redirects=False, cookies=cookies, data=payload, proxies=proxies, timeout=3)
+				#print(r.text)
+				#print(r.status_code)
+				if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
+					#print('login failed')
+					login_state = 'login failed'
+				if r.status_code == 200 :
+					print(r.text)
+			except BaseException, e:
+				login_state = e.__class__.__name__
+				print('except:',e)
+				print(login_state)
+			finally:
+				return r.text
+		elif cookie == "null":
+			# 更新template
+			template_dic = self.app.template[1]
+			template_dic['login_state'] = u'请先登录'
+			self.app.template = ("index.html", template_dic)
+
+
+
 	#二级审核
 	@htmlPy.Slot()
 	def secondExamineList(self):
@@ -101,12 +136,11 @@ class BackEnd(htmlPy.Object):
 		cookies = {'JSESSIONID':cookie}
 		proxies = {"http":"http://127.0.0.1:8081"}
 		login_state = self.app.template[1]['login_state']
-		if self.getCookie() != "null":
+		if cookie != "null":
 			try:
 				r = requests.post("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineList", allow_redirects=False, cookies=cookies, data=payload, proxies=proxies, timeout=3)
 				print(r.text)
 				print(r.status_code)
-
 				if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
 					print('login failed')
 					login_state = 'login failed'
@@ -124,6 +158,9 @@ class BackEnd(htmlPy.Object):
 				self.app.template = ("index.html", template_dic)
 				#刷新js
 				self.app.evaluate_javascript("$('div.content1').hide();$('div#erjishenhe').show();")
-
-
+		elif cookie == "null":
+			# 更新template
+			template_dic = self.app.template[1]
+			template_dic['login_state'] = u'请先登录'
+			self.app.template = ("index.html", template_dic)
 

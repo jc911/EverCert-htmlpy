@@ -3,6 +3,8 @@ import htmlPy
 import requests
 import json
 import re
+from bs4 import BeautifulSoup
+from lxml import etree
 
 class BackEnd(htmlPy.Object):
 	def __init__(self, app):
@@ -84,8 +86,8 @@ class BackEnd(htmlPy.Object):
 		print(template_dic)
 		self.app.template = ("index.html", template_dic)
 
-
-	def post_query(self, url, payload):
+	#post请求函数
+	def postQuery(self, url, payload):
 		cookie = self.getCookie()
 		cookies = {'JSESSIONID': cookie}
 		proxies = {
@@ -101,18 +103,21 @@ class BackEnd(htmlPy.Object):
 					#print('login failed')
 					login_state = 'login failed'
 				if r.status_code == 200 :
-					print(r.text)
+					#print(r.text)
+					return r.text
 			except BaseException, e:
 				login_state = e.__class__.__name__
 				print('except:',e)
 				print(login_state)
+				return
 			finally:
-				return r.text
+				pass
 		elif cookie == "null":
 			# 更新template
 			template_dic = self.app.template[1]
 			template_dic['login_state'] = u'请先登录'
 			self.app.template = ("index.html", template_dic)
+			return
 
 
 
@@ -132,35 +137,55 @@ class BackEnd(htmlPy.Object):
 			'isv':'',
 			'ivp':'',
 		}
-		cookie = self.getCookie()
-		cookies = {'JSESSIONID':cookie}
-		proxies = {"http":"http://127.0.0.1:8081"}
-		login_state = self.app.template[1]['login_state']
-		if cookie != "null":
-			try:
-				r = requests.post("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineList", allow_redirects=False, cookies=cookies, data=payload, proxies=proxies, timeout=3)
-				print(r.text)
-				print(r.status_code)
-				if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
-					print('login failed')
-					login_state = 'login failed'
-				if r.status_code == 200 :
-					print(r.text)
-			except BaseException, e:
-				login_state = e.__class__.__name__
-				print('except:',e)
-				print(login_state)
-			finally:
-				#更新template
-				template_dic = self.app.template[1]
-				#template_dic['cnvd_bianhaos'] = cnvd_bianhaos
-				template_dic['login_state'] = login_state
-				self.app.template = ("index.html", template_dic)
-				#刷新js
-				self.app.evaluate_javascript("$('div.content1').hide();$('div#erjishenhe').show();")
-		elif cookie == "null":
-			# 更新template
-			template_dic = self.app.template[1]
-			template_dic['login_state'] = u'请先登录'
-			self.app.template = ("index.html", template_dic)
+		response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineList", payload)
+		# print(response)
+		if response != None:
+			# soup = BeautifulSoup(response,"lxml")
+			# for tag in soup.find_all(target='ids'):
+			# 	print(tag['rel'])
+
+
+
+			tree = etree.HTML(response)
+			bianhao_list = tree.xpath('//*[@target="ids"]/td[3]//text()')
+			biaoti_list = tree.xpath('//*[@target="ids"]/td[4]//text()')
+			lurushijian_list = tree.xpath('//*[@target="ids"]/td[5]//text()')
+			weixiandengji_list = tree.xpath('//*[@target="ids"]/td[6]//text()')
+			gongxianzhe_list = tree.xpath('//*[@target="ids"]/td[7]//text()')
+
+			print(biaoti_list)
+
+
+
+		# cookie = self.getCookie()
+		# cookies = {'JSESSIONID':cookie}
+		# proxies = {"http":"http://127.0.0.1:8081"}
+		# login_state = self.app.template[1]['login_state']
+		# if cookie != "null":
+		# 	try:
+		# 		r = requests.post("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineList", allow_redirects=False, cookies=cookies, data=payload, proxies=proxies, timeout=3)
+		# 		print(r.text)
+		# 		print(r.status_code)
+		# 		if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
+		# 			print('login failed')
+		# 			login_state = 'login failed'
+		# 		if r.status_code == 200 :
+		# 			print(r.text)
+		# 	except BaseException, e:
+		# 		login_state = e.__class__.__name__
+		# 		print('except:',e)
+		# 		print(login_state)
+		# 	finally:
+		# 		#更新template
+		# 		template_dic = self.app.template[1]
+		# 		#template_dic['cnvd_bianhaos'] = cnvd_bianhaos
+		# 		template_dic['login_state'] = login_state
+		# 		self.app.template = ("index.html", template_dic)
+		# 		#刷新js
+		# 		self.app.evaluate_javascript("$('div.content1').hide();$('div#erjishenhe').show();")
+		# elif cookie == "null":
+		# 	# 更新template
+		# 	template_dic = self.app.template[1]
+		# 	template_dic['login_state'] = u'请先登录'
+		# 	self.app.template = ("index.html", template_dic)
 

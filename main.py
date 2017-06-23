@@ -10,7 +10,6 @@ app.static_path = os.path.join(BASE_DIR, "static/")
 app.template_path = os.path.join(BASE_DIR, "templates/")
 
 
-
 from back_end import BackEnd
 app.bind(BackEnd(app))
 #app.template = ("index.html", {})

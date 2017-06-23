@@ -70,6 +70,7 @@
 				<div>
 					二级审核内容
 					<table>
+						<form action="BackEnd.secondExamineUpdate_one" data-bind="true">
 					{% for erjishenhe_list in erjishenhe_lists %}
 						<tr>
 						<td>{{ erjishenhe_list[0] }}</td>
@@ -78,15 +79,17 @@
 						<td>{{ erjishenhe_list[3] }}</td>
 						<td>{{ erjishenhe_list[4] }}</td>
 						<td>
-							<form action="BackEnd.secondExamineUpdate_one" data-bind="true">
-							<input type="hidden" value="{{ erjishenhe_list[5] }}" name="flawId"/>
-							<input type="submit" value="审核通过" onclick="return confirm('确定通过二级吗？');" />
-							</form>
+
+							<input type="checkbox" value="{{ erjishenhe_list[5] }}" name="flawId"/>
+
+
 						</td>
 
 						</tr>
 
 					{% endfor %}
+						<input type="submit" value="审核通过" id="" onclick="check_reflash(this.id);return confirm('确定通过二级吗？');" />
+						</form>
 					</table>
 
 				</div>
@@ -105,11 +108,12 @@ $("a#sanjishenhe").click(function(){$('div.content1').hide();$('div#sanjishenhe'
 $(document).ready(function(){
 	$("tr:even").css("background-color","#FFFFCC");
 });
-//滑动变色
-<!--$("tr").mouseover(function (){-->
-	<!--$(this).css("background-color","#FF9900");-->
-<!--}).mouseout(function (){-->
-	<!--$(this).css("background-color","");-->
-<!--});-->
+
+function check_reflash(id){
+	<!--$("[name='flawId'][value=id]").attr("checked","checked");-->
+	alert(id);
+}
+
+
 </script>
 </html>

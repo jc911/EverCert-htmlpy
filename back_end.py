@@ -57,7 +57,7 @@ class BackEnd(htmlPy.Object):
 	@htmlPy.Slot()
 	def getCookie(self):
 		#print(self.app.html)
-		print(self.app.template)
+		#print(self.app.template)
 		try:
 			login_state = self.app.template[1]['login_state']
 			if re.search(r'Cookie: (.*)',login_state) != None:
@@ -66,7 +66,7 @@ class BackEnd(htmlPy.Object):
 				Cookie = "null"
 		except:
 			Cookie = "null"
-		print(Cookie)
+		#print(Cookie)
 		return Cookie
 
 	#一级审核
@@ -162,7 +162,7 @@ class BackEnd(htmlPy.Object):
 				gongxianzhe = gongxianzhe_list[i].strip()
 				erjishenhe_list = [bianhao,biaoti,lurushijian,weixiandengji,gongxianzhe,flawId]
 				erjishenhe_lists.append(erjishenhe_list)
-				print(flawId)
+				#print(flawId)
 			# 更新template
 			template_dic = self.app.template[1]
 			template_dic['erjishenhe_lists'] = erjishenhe_lists
@@ -174,6 +174,7 @@ class BackEnd(htmlPy.Object):
 	@htmlPy.Slot(str, result=str)
 	def secondExamineUpdate_one(self, json_str):
 		json_tab = json.loads(json_str)
+		print(json_tab)
 		flawId = json_tab['flawId']
 		print(flawId)
 		payload = {
@@ -182,7 +183,7 @@ class BackEnd(htmlPy.Object):
 			'isg':'0',
 			'content':''
 		}
-		response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
+		#response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
 		# print(response)
 		self.secondExamineList()
 

@@ -3,7 +3,6 @@ import htmlPy
 import requests
 import json
 import re
-from bs4 import BeautifulSoup
 from lxml import etree
 
 class BackEnd(htmlPy.Object):
@@ -102,6 +101,8 @@ class BackEnd(htmlPy.Object):
 				if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
 					#print('login failed')
 					login_state = 'login failed'
+					# 刷新js
+					self.app.evaluate_javascript("alert('"+u'session失效，请重新登录'+"');")
 				if r.status_code == 200 :
 					#print(r.text)
 					return r.text
@@ -109,6 +110,8 @@ class BackEnd(htmlPy.Object):
 				login_state = e.__class__.__name__
 				print('except:',e)
 				print(login_state)
+				#刷新js
+				self.app.evaluate_javascript("alert('"+login_state+"');")
 				return
 			finally:
 				pass
@@ -117,11 +120,13 @@ class BackEnd(htmlPy.Object):
 			template_dic = self.app.template[1]
 			template_dic['login_state'] = u'请先登录'
 			self.app.template = ("index.html", template_dic)
+			# 刷新js
+			self.app.evaluate_javascript("alert('"+u'请先登录'+"');")
 			return
 
 
 
-	#二级审核
+	#二级审核检索
 	@htmlPy.Slot()
 	def secondExamineList(self):
 		payload = {
@@ -140,52 +145,46 @@ class BackEnd(htmlPy.Object):
 		response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineList", payload)
 		# print(response)
 		if response != None:
-			# soup = BeautifulSoup(response,"lxml")
-			# for tag in soup.find_all(target='ids'):
-			# 	print(tag['rel'])
-
-
-
 			tree = etree.HTML(response)
-			bianhao_list = tree.xpath('//*[@target="ids"]/td[3]//text()')
-			biaoti_list = tree.xpath('//*[@target="ids"]/td[4]//text()')
-			lurushijian_list = tree.xpath('//*[@target="ids"]/td[5]//text()')
-			weixiandengji_list = tree.xpath('//*[@target="ids"]/td[6]//text()')
-			gongxianzhe_list = tree.xpath('//*[@target="ids"]/td[7]//text()')
+			flawId_list = tree.xpath('//*[@target="ids"]/attribute::rel')
+			bianhao_list = tree.xpath('//*[@target="ids"]/td[3]/text()')
+			biaoti_list = tree.xpath('//*[@target="ids"]/td[4]/text()')
+			lurushijian_list = tree.xpath('//*[@target="ids"]/td[5]/text()')
+			weixiandengji_list = tree.xpath('//*[@target="ids"]/td[6]/text()')
+			gongxianzhe_list = tree.xpath('//*[@target="ids"]/td[7]/text()')
+			erjishenhe_lists = []
+			for i in range(len(bianhao_list)):
+				flawId = flawId_list[i].strip()
+				bianhao = bianhao_list[i].strip()
+				biaoti = biaoti_list[i].strip()
+				lurushijian = lurushijian_list[i].strip()
+				weixiandengji = weixiandengji_list[i].strip()
+				gongxianzhe = gongxianzhe_list[i].strip()
+				erjishenhe_list = [bianhao,biaoti,lurushijian,weixiandengji,gongxianzhe,flawId]
+				erjishenhe_lists.append(erjishenhe_list)
+				print(flawId)
+			# 更新template
+			template_dic = self.app.template[1]
+			template_dic['erjishenhe_lists'] = erjishenhe_lists
+			self.app.template = ("index.html", template_dic)
+			# 刷新js
+			self.app.evaluate_javascript("$('div#erjishenhe').show();")
 
-			print(biaoti_list)
+	# 二级审核通过
+	@htmlPy.Slot(str, result=str)
+	def secondExamineUpdate_one(self, json_str):
+		json_tab = json.loads(json_str)
+		flawId = json_tab['flawId']
+		print(flawId)
+		payload = {
+			'flawId':flawId,
+			'status':'1',
+			'isg':'0',
+			'content':''
+		}
+		response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
+		# print(response)
+		self.secondExamineList()
 
 
-
-		# cookie = self.getCookie()
-		# cookies = {'JSESSIONID':cookie}
-		# proxies = {"http":"http://127.0.0.1:8081"}
-		# login_state = self.app.template[1]['login_state']
-		# if cookie != "null":
-		# 	try:
-		# 		r = requests.post("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineList", allow_redirects=False, cookies=cookies, data=payload, proxies=proxies, timeout=3)
-		# 		print(r.text)
-		# 		print(r.status_code)
-		# 		if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
-		# 			print('login failed')
-		# 			login_state = 'login failed'
-		# 		if r.status_code == 200 :
-		# 			print(r.text)
-		# 	except BaseException, e:
-		# 		login_state = e.__class__.__name__
-		# 		print('except:',e)
-		# 		print(login_state)
-		# 	finally:
-		# 		#更新template
-		# 		template_dic = self.app.template[1]
-		# 		#template_dic['cnvd_bianhaos'] = cnvd_bianhaos
-		# 		template_dic['login_state'] = login_state
-		# 		self.app.template = ("index.html", template_dic)
-		# 		#刷新js
-		# 		self.app.evaluate_javascript("$('div.content1').hide();$('div#erjishenhe').show();")
-		# elif cookie == "null":
-		# 	# 更新template
-		# 	template_dic = self.app.template[1]
-		# 	template_dic['login_state'] = u'请先登录'
-		# 	self.app.template = ("index.html", template_dic)
 

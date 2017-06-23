@@ -4,40 +4,29 @@
 	<meta http-equiv="Content-Language" content="zh-cn" />
 	<title>处置-验证工具</title>
 	<style>
-		/*浮动*/
-		.left {float:left;}
-		.right {float:right;}
-		.clearfix:after {visibility: hidden; display: block; clear: both; height: 0; font-size: 0; content: ".";}
-		.clearfix{zoom:1;}
-		div {
-			border:1px dashed gray;
-		}
-
-
-
-
 
 	</style>
+	<!--浏览器识别-->
+	<link rel="stylesheet" href="static/base.css">
 	<script type="text/javascript" src="static/jquery-3.2.1.min.js"></script>
+	<!--htmlpy识别-->
+	<link rel="stylesheet" href="{{ 'base.css'|staticfile }}">
 	<script src="{{ 'jquery-3.2.1.min.js'|staticfile }}"></script>
 </head>
 	<body>
-		<a href="BackEnd.say_hello_world" data-bind="true">
-			Click to say "Hello, world"
-		</a>
+		<!--<a href="BackEnd.say_hello_world" data-bind="true">-->
+			<!--Click to say "Hello, world"-->
+		<!--</a>-->
 		<div>
 			<form action="BackEnd.login" data-bind="true">
 				用户名：<input name="userName" value="{{ userName }}"/>
 				密码：<input type="password" name="passWord" value="{{ passWord }}"/>
 				<input type="submit" value="Login"/>
-
 			</form>
 			<div>登录状态：{{ login_state }}</div>
 
-
-
 		</div>
-		<div><a href="BackEnd.getCookie" data-bind="true">获取cookie</a></div>
+		<!--<div><a href="BackEnd.getCookie" data-bind="true">获取cookie</a></div>-->
 		<div>
 			<div>
 
@@ -71,12 +60,34 @@
 				<div>
 					搜索选项
 					<a href="BackEnd.secondExamineList" data-bind="true">检索</a>
+					<form action="BackEnd.secondExamineList" data-bind="true">
+						漏洞编号：<input name="bianhao_start" placeholder="CNVD-C-2017-XXXXX" onkeyup="document.getElementById('erjishenhe_search').value=this.value;"/>
+						-
+						<input id="erjishenhe_search" name="bianhao_stop" placeholder="CNVD-C-2017-XXXXX"/>
+						<input type="submit" value="检索"/>
+					</form>
 				</div>
 				<div>
 					二级审核内容
-					{% for cnvd_bianhao_2 in cnvd_bianhaos_2 %}
-						<td>{{ cnvd_bianhao_2 }}</td>
+					<table>
+					{% for erjishenhe_list in erjishenhe_lists %}
+						<tr>
+						<td>{{ erjishenhe_list[0] }}</td>
+						<td>{{ erjishenhe_list[1] }}</td>
+						<td>{{ erjishenhe_list[2] }}</td>
+						<td>{{ erjishenhe_list[3] }}</td>
+						<td>{{ erjishenhe_list[4] }}</td>
+						<td>
+							<form action="BackEnd.secondExamineUpdate_one" data-bind="true">
+							<input type="hidden" value="{{ erjishenhe_list[5] }}" name="flawId"/>
+							<input type="submit" value="审核通过" onclick="return confirm('确定通过二级吗？');" />
+							</form>
+						</td>
+
+						</tr>
+
 					{% endfor %}
+					</table>
 
 				</div>
 
@@ -87,10 +98,18 @@
 	</body>
 <script>
 
-
 $("a#yijishenhe").click(function(){$('div.content1').hide();$('div#yijishenhe').show();return false;});
 $("a#erjishenhe").click(function(){$('div.content1').hide();$('div#erjishenhe').show();return false;});
 $("a#sanjishenhe").click(function(){$('div.content1').hide();$('div#sanjishenhe').show();return false;});
-
+//隔行变色
+$(document).ready(function(){
+	$("tr:even").css("background-color","#FFFFCC");
+});
+//滑动变色
+<!--$("tr").mouseover(function (){-->
+	<!--$(this).css("background-color","#FF9900");-->
+<!--}).mouseout(function (){-->
+	<!--$(this).css("background-color","");-->
+<!--});-->
 </script>
 </html>

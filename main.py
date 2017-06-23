@@ -7,7 +7,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app = htmlPy.AppGUI(title=u"Application", maximized=False, plugins=True, developer_mode=True)
 
 app.static_path = os.path.join(BASE_DIR, "static/")
-app.template_path = os.path.join(BASE_DIR)
+app.template_path = os.path.join(BASE_DIR, "templates/")
 
 
 

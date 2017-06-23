@@ -1,0 +1,18 @@
+/*浮动*/
+.left {float:left;}
+.right {float:right;}
+.clearfix:after {visibility: hidden; display: block; clear: both; height: 0; font-size: 0; content: ".";}
+.clearfix{zoom:1;}
+div {
+	border:1px dashed gray;
+}
+tr:hover
+{
+	background-color:#FF9900;
+}
+tr.even{
+	background-color:#FFFFCC;
+}
+div.content1{
+	display:none;
+}

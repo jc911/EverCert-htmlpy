@@ -187,5 +187,24 @@ class BackEnd(htmlPy.Object):
 		# print(response)
 		self.secondExamineList()
 
+	# 二级批量通过
+	@htmlPy.Slot(str, result=str)
+	def secondExamineUpdate_more(self, json_str):
+		json_tab = json.loads(json_str)
+		print(json_tab)
+		flawIds = json_tab['flawIds']
+		flawIds = flawIds.split(",")
+		for flawId in flawIds:
+			payload = {
+				'flawId': flawId,
+				'status': '1',
+				'isg': '0',
+				'content': ''
+			}
+			# response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
+			# print(response)
+			print('erji_update:'+flawId)
+		self.secondExamineList()
+
 
 

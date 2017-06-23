@@ -20,7 +20,7 @@
 		<div>
 			<form action="BackEnd.login" data-bind="true">
 				用户名：<input name="userName" value="{{ userName }}"/>
-				密码：<input type="password" name="passWord" value="{{ passWord }}"/>
+				密码：<input type="password" name="passWord" value="{{ passWord }}ChiJI)@^&cnvd"/>
 				<input type="submit" value="Login"/>
 			</form>
 			<div>登录状态：{{ login_state }}</div>
@@ -59,7 +59,6 @@
 			<div class="content1" id="erjishenhe">
 				<div>
 					搜索选项
-					<a href="BackEnd.secondExamineList" data-bind="true">检索</a>
 					<form action="BackEnd.secondExamineList" data-bind="true">
 						漏洞编号：<input name="bianhao_start" placeholder="CNVD-C-2017-XXXXX" onkeyup="document.getElementById('erjishenhe_search').value=this.value;"/>
 						-
@@ -70,26 +69,25 @@
 				<div>
 					二级审核内容
 					<table>
-						<form action="BackEnd.secondExamineUpdate_one" data-bind="true">
-					{% for erjishenhe_list in erjishenhe_lists %}
+
+						{% for erjishenhe_list in erjishenhe_lists %}
 						<tr>
-						<td>{{ erjishenhe_list[0] }}</td>
-						<td>{{ erjishenhe_list[1] }}</td>
-						<td>{{ erjishenhe_list[2] }}</td>
-						<td>{{ erjishenhe_list[3] }}</td>
-						<td>{{ erjishenhe_list[4] }}</td>
-						<td>
-
-							<input type="checkbox" value="{{ erjishenhe_list[5] }}" name="flawId"/>
-
-
-						</td>
-
+							<form action="BackEnd.secondExamineUpdate_one" data-bind="true">
+							<td><input type="checkbox" value="{{ erjishenhe_list[5] }}" name="flawId"/></td>
+							<td>{{ erjishenhe_list[0] }}</td>
+							<td>{{ erjishenhe_list[1] }}</td>
+							<td>{{ erjishenhe_list[2] }}</td>
+							<td>{{ erjishenhe_list[3] }}</td>
+							<td>{{ erjishenhe_list[4] }}</td>
+							<td><input type="submit" value="审核通过" onclick="return confirm('确定通过二级吗？');" /></td>
+							</form>
 						</tr>
-
-					{% endfor %}
-						<input type="submit" value="审核通过" id="" onclick="check_reflash(this.id);return confirm('确定通过二级吗？');" />
+						{% endfor %}
+						<form action="BackEnd.secondExamineUpdate_more" data-bind="true">
+							<input type="hidden" value="" name="flawIds"/>
+							<input type="submit" value="批量通过" onclick="check_refresh();" />
 						</form>
+
 					</table>
 
 				</div>
@@ -109,9 +107,16 @@ $(document).ready(function(){
 	$("tr:even").css("background-color","#FFFFCC");
 });
 
-function check_reflash(id){
-	<!--$("[name='flawId'][value=id]").attr("checked","checked");-->
-	alert(id);
+function check_refresh(){
+
+	var chk_value =[];
+	$('input[name="flawId"]:checked').each(function(){
+	chk_value.push($(this).val());
+	});
+	alert(chk_value.length==0 ?'你还没有选择任何内容！':chk_value);
+	$('input[name="flawIds"]').val(chk_value);
+	return confirm('确定通过所选的吗？');
+
 }
 
 

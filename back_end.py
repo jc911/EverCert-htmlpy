@@ -176,7 +176,7 @@ class BackEnd(htmlPy.Object):
 		json_tab = json.loads(json_str)
 		print(json_tab)
 		flawId = json_tab['flawId']
-		print(flawId)
+		print('erji_update:' + flawId)
 		payload = {
 			'flawId':flawId,
 			'status':'1',
@@ -203,7 +203,7 @@ class BackEnd(htmlPy.Object):
 			}
 			# response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
 			# print(response)
-			print('erji_update:'+flawId)
+			print('erji_updates:'+flawId)
 		self.secondExamineList()
 
 

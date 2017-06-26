@@ -29,16 +29,17 @@
 		<!--<div><a href="BackEnd.getCookie" data-bind="true">获取cookie</a></div>-->
 		<div>
 			<div>
-
-				<a href="#" id="yijishenhe">一级审核</a>
-				<a href="#" id="erjishenhe">二级审核</a>
-				<a href="#" id="sanjishenhe">三级审核（快速核验）</a>
-				<a href="#" id="farenwu">发任务</a>
-				<a href="#" id="yanzhengrenwu">验证任务</a>
-				<a href="#" id="chuzhirenwu">处置任务</a>
-				<a href="#" id="liyong">利用任务（特征提取）</a>
-
+				<ul class="clearfix">
+					<li class="left"><a href="#" id="yijishenhe">一级审核</a></li>
+					<li class="left"><a href="#" id="erjishenhe">二级审核</a></li>
+					<li class="left"><a href="#" id="sanjishenhe">三级审核（快速核验）</a></li>
+					<li class="left"><a href="#" id="farenwu">发任务</a></li>
+					<li class="left"><a href="#" id="yanzhengrenwu">验证任务</a></li>
+					<li class="left"><a href="#" id="chuzhirenwu">处置任务</a></li>
+					<li class="left"><a href="#" id="liyong">利用任务（特征提取）</a></li>
+				</ul>
 			</div>
+			<!-- 一级审核 -->
 			<div class="content1" id="yijishenhe">
 				<div>
 					搜索选项
@@ -49,13 +50,10 @@
 					{% for cnvd_bianhao in cnvd_bianhaos %}
 						<td>{{ cnvd_bianhao }}</td>
 					{% endfor %}
-
 				</div>
-
-
-
 			</div>
 
+			<!-- 二级审核 -->
 			<div class="content1" id="erjishenhe">
 				<div>
 					搜索选项
@@ -69,7 +67,6 @@
 				<div>
 					二级审核内容
 					<table>
-
 						{% for erjishenhe_list in erjishenhe_lists %}
 						<tr>
 							<form action="BackEnd.secondExamineUpdate_one" data-bind="true">
@@ -85,14 +82,10 @@
 						{% endfor %}
 						<form action="BackEnd.secondExamineUpdate_more" data-bind="true">
 							<input type="hidden" value="" name="flawIds"/>
-							<input type="submit" value="批量通过" onclick="check_refresh();" />
+							<input type="submit" value="批量通过" onclick="return check_refresh();" />
 						</form>
-
 					</table>
-
 				</div>
-
-
 			</div>
 
 		</div>
@@ -108,14 +101,18 @@ $(document).ready(function(){
 });
 
 function check_refresh(){
-
 	var chk_value =[];
 	$('input[name="flawId"]:checked').each(function(){
 	chk_value.push($(this).val());
 	});
-	alert(chk_value.length==0 ?'你还没有选择任何内容！':chk_value);
-	$('input[name="flawIds"]').val(chk_value);
-	return confirm('确定通过所选的吗？');
+	if (chk_value.length==0){
+		alert('你还没有选择任何内容！');
+		return false;
+	}else{
+		alert(chk_value);
+		$('input[name="flawIds"]').val(chk_value);
+		return confirm('确定通过所选的吗？');
+	}
 
 }
 

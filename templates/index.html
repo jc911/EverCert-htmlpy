@@ -96,7 +96,14 @@
 						漏洞编号：<input name="bianhao_start" placeholder="CNVD-C-2017-XXXXX" onkeyup="document.getElementById('erjishenhe_search').value=this.value;"/>
 						-
 						<input id="erjishenhe_search" name="bianhao_stop" placeholder="CNVD-C-2017-XXXXX"/>
-						报送时间：<input name="storageTimeStartStr"/>-<input name="storageTimeEndStr"/>
+						时间：
+						<select name="timeType">
+							<option value="0">归档时间</option>
+							<option value="1">录入时间</option>
+							<option value="2" selected="selected">报送时间</option>
+							<option value="3">发布时间</option>
+						</select>
+						<input name="storageTimeStartStr"/>-<input name="storageTimeEndStr"/>
 						是否事件型：
 						<select name="isEvent">
 							<option value="0">否</option>
@@ -109,8 +116,28 @@
 							<option value="2" selected="selected">是</option>
 						</select>
 						是否已作废：
+						<select name="isCancel">
+							<option value="0">是</option>
+							<option value="1" selected="selected">否</option>
+						</select>
 						是否已归档：
+						<select name="status">
+							<option value="">未选择</option>
+							<option value="1">一级审核</option>
+							<option value="2">二级审核</option>
+							<option value="3" selected="selected">三级审核</option>
+							<option value="4">补录漏洞</option>
+							<option value="5">补录待审核</option>
+							<option value="9">已归档</option>
+							<option value="-1">驳回</option>
+							<option value="-9">驳回待审</option>
+						</select>
 						是否前台上报：
+						<select name="isu">
+							<option value="">全部</option>
+							<option value="0" selected="selected">是</option>
+							<option value="1">否</option>
+						</select>
 
 						<input type="submit" value="检索"/>
 					</form>

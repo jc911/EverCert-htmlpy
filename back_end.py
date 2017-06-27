@@ -206,5 +206,41 @@ class BackEnd(htmlPy.Object):
 			print('erji_updates:'+flawId)
 		self.secondExamineList()
 
+	# 三级审核检索
+	@htmlPy.Slot(str, result=str)
+	def thirdExamineList(self, json_str):
+		json_tab = json.loads(json_str)
+		print(json_tab)
+		payload = {
+			'number' : '',
+			'numberType' : '',
+			'title' : '',
+			'isEvent' : json_tab['isEvent'],
+			'hangye' : '',
+			'serverityId' : '',
+			'isAdditional' : '',
+			'email' : '',
+			'description' : '',
+			'causeId' : '',
+			'threadId' : '',
+			'positionId' : '',
+			'softStyleId' : '',
+			'isCancel' : json_tab['isCancel'],
+			'isu' : json_tab['isu'],
+			'industryId' : '',
+			'timeType' : json_tab['timeType'],
+			'storageTimeStartStr' : json_tab['storageTimeStartStr'],
+			'storageTimeEndStr' : json_tab['storageTimeEndStr'],
+			'referenceType' : '',
+			'ref_id' : '',
+			'is_repeat' : json_tab['is_repeat'],
+			'isv' : '',
+			'ivp' : '',
+			'status' : json_tab['status'],
+			'isCut' : ''
+		}
+		response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/list", payload)
+		print(response)
+
 
 

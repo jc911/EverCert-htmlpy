@@ -124,6 +124,44 @@ class BackEnd(htmlPy.Object):
 			self.app.evaluate_javascript("alert('"+u'请先登录'+"');")
 			return
 
+	# get请求函数
+	def getQuery(self, url, payload):
+		cookie = self.getCookie()
+		cookies = {'JSESSIONID': cookie}
+		proxies = {
+			# "http": "http://127.0.0.1:8081"
+		}
+		login_state = self.app.template[1]['login_state']
+		if cookie != "null":
+			try:
+				r = requests.get(url, params=payload, allow_redirects=False, cookies=cookies, proxies=proxies, timeout=3)
+				# print(r.text)
+				# print(r.status_code)
+				if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
+					# print('login failed')
+					login_state = 'login failed'
+					# 刷新js
+					self.app.evaluate_javascript("alert('" + u'session失效，请重新登录' + "');")
+				if r.status_code == 200:
+					# print(r.text)
+					return r.text
+			except BaseException, e:
+				login_state = e.__class__.__name__
+				print('except:', e)
+				print(login_state)
+				# 刷新js
+				self.app.evaluate_javascript("alert('" + login_state + "');")
+				return
+			finally:
+				pass
+		elif cookie == "null":
+			# 更新template
+			template_dic = self.app.template[1]
+			template_dic['login_state'] = u'请先登录'
+			self.app.template = ("index.html", template_dic)
+			# 刷新js
+			self.app.evaluate_javascript("alert('" + u'请先登录' + "');")
+			return
 
 
 	#二级审核检索
@@ -240,7 +278,41 @@ class BackEnd(htmlPy.Object):
 			'isCut' : ''
 		}
 		response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/list", payload)
-		print(response)
+		#print(response)
+		if response != None:
+			tree = etree.HTML(response)
+			flawId_list = tree.xpath('//*[@target="flawIds"]/attribute::rel')
+			bianhao_list = tree.xpath('//*[@target="flawIds"]/td[3]/text()')
+			biaoti_list = tree.xpath('//*[@target="flawIds"]/td[5]/text()')
+			lurushijian_list = tree.xpath('//*[@target="flawIds"]/td[8]/text()')
+			gongxianzhe_list = tree.xpath('//*[@target="flawIds"]/td[10]/text()')
+			pingfen_list = tree.xpath('//*[@target="flawIds"]/td[14]/text()')
+			sanjishenhe_lists = []
+			for i in range(len(bianhao_list)):
+				flawId = flawId_list[i].strip()
+				bianhao = bianhao_list[i].strip()
+				biaoti = biaoti_list[i].strip()
+				lurushijian = lurushijian_list[i].strip()
+				gongxianzhe = gongxianzhe_list[i].strip()
+				pingfen = pingfen_list[i].strip()
+				sanjishenhe_list = [flawId,bianhao,biaoti,lurushijian,gongxianzhe,pingfen]
+				sanjishenhe_lists.append(sanjishenhe_list)
+				#print(flawId)
+			# 更新template
+			template_dic = self.app.template[1]
+			template_dic['sanjishenhe_lists'] = sanjishenhe_lists
+			self.app.template = ("index.html", template_dic)
+			# 刷新js
+			self.app.evaluate_javascript("$('div#sanjishenhe').show();")
 
+	# 三级审核评分查询
+	@htmlPy.Slot(str, result=str)
+	def calScoreCreate(self, json_str):
+		json_tab = json.loads(json_str)
+		print(json_tab)
+		flawId = json_tab['flawId']
+		payload = {'flawId':flawId}
+		response = self.getQuery('http://202.108.212.74:8000/cnvd_admin/flaw/calScoreCreate',payload)
+		print(response)
 
 

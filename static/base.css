@@ -16,6 +16,12 @@ tr.even{
 div.content1{
 	display:none;
 }
+div.content2{
+	width:760px;
+}
+div.content3{
+	width:500px;
+}
 li {
 	margin-left:10px;
 

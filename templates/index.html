@@ -27,7 +27,8 @@
 
 		</div>
 		<!--<div><a href="BackEnd.getCookie" data-bind="true">获取cookie</a></div>-->
-		<div>
+
+		<div class="clearfix">
 			<div>
 				<ul class="clearfix">
 					<li class="left"><a href="#" id="yijishenhe">一级审核</a></li>
@@ -64,7 +65,7 @@
 						<input type="submit" value="检索"/>
 					</form>
 				</div>
-				<div>
+				<div class="content2">
 					二级审核内容
 					<table>
 						{% for erjishenhe_list in erjishenhe_lists %}
@@ -89,7 +90,7 @@
 			</div>
 
 			<!-- 三级审核（快速核验） -->
-			<div class="content1" id="sanjishenhe">
+			<div class="content1 left clearfix" id="sanjishenhe">
 				<div>
 					搜索选项
 					<form action="BackEnd.thirdExamineList" data-bind="true">
@@ -142,27 +143,89 @@
 						<input type="submit" value="检索"/>
 					</form>
 				</div>
-				<div>
+				<div class="content2 left">
 					三级审核内容（快速核验）
 					<table>
-						{% for erjishenhe_list in erjishenhe_lists %}
 						<tr>
-							<form action="BackEnd.secondExamineUpdate_one" data-bind="true">
-							<td><input type="checkbox" value="{{ erjishenhe_list[5] }}" name="flawId"/></td>
-							<td>{{ erjishenhe_list[0] }}</td>
-							<td>{{ erjishenhe_list[1] }}</td>
-							<td>{{ erjishenhe_list[2] }}</td>
-							<td>{{ erjishenhe_list[3] }}</td>
-							<td>{{ erjishenhe_list[4] }}</td>
-							<td><input type="submit" value="审核通过" onclick="return confirm('确定通过二级吗？');" /></td>
-							</form>
+							<th></th>
+							<th>漏洞编号</th>
+							<th>漏洞标题</th>
+							<th>录入时间</th>
+							<th>贡献者</th>
+							<th>评分</th>
+
+						</tr>
+
+						{% for sanjishenhe_list in sanjishenhe_lists %}
+						<tr>
+							<td><input type="checkbox" value="{{ sanjishenhe_list[0] }}" name="flawId"/></td>
+							<td>{{ sanjishenhe_list[1] }}</td>
+							<td>{{ sanjishenhe_list[2] }}</td>
+							<td>{{ sanjishenhe_list[3] }}</td>
+							<td>{{ sanjishenhe_list[4] }}</td>
+							<td>{{ sanjishenhe_list[5] }}
+								<form action="BackEnd.calScoreCreate" data-bind="true">
+									<input type="hidden" value="{{ sanjishenhe_list[0] }}" name="flawId"/>
+									<input type="submit" value="去评分"/>
+								</form>
+							</td>
 						</tr>
 						{% endfor %}
-						<form action="BackEnd.secondExamineUpdate_more" data-bind="true">
-							<input type="hidden" value="" name="flawIds"/>
-							<input type="submit" value="批量通过" onclick="return check_refresh();" />
-						</form>
 					</table>
+				</div>
+				<div class="content3 left">
+					<form action="BackEnd.calScore">
+						<input type="text" name="flawId" value=""/>
+						<input type="hidden" name="basemetric.id" value=""  />
+						<input type="hidden" name="temporalMetric.id" value="" />
+						<input type="hidden" name="environmentalMetric.id" value="" />
+						<input type="hidden" name="freshId" value=""/>
+						攻击途径：
+						<select name="accessVector.id">
+							<option value="3" selected="selected">远程网络</option>
+							<option value="2">邻近网络</option>
+							<option value="1">本地</option>
+						</select>
+						攻击复杂度：
+						<select name="accessComplexity.id">
+							<option value="6" selected="selected">低</option>
+							<option value="5">中</option>
+							<option value="4">高</option>
+						</select>
+						认证：
+						<select name="authentication.id">
+							<option value="9" selected="selected">不需要认证</option>
+							<option value="8">一次</option>
+							<option value="7">多次</option>
+						</select>
+						机密性：
+						<select name="confidentialityImpact.id">
+							<option value="10" selected="selected">不受影响</option>
+							<option value="12">完全地</option>
+							<option value="11">部份地</option>
+						</select>
+						完整性：
+						<select name="integrityImpact.id">
+							<option value="13" selected="selected">不受影响</option>
+							<option value="15">完全地</option>
+							<option value="14">部份地</option>
+						</select>
+						可用性：
+						<select name="availabilityImpact.id">
+							<option value="16" selected="selected">不受影响</option>
+							<option value="18">完全地</option>
+							<option value="17">部份地</option>
+						</select>
+						<input type="hidden" name="exploitability.id" value=""/>
+						<input type="hidden" name="remediationLevel.id" value=""/>
+						<input type="hidden" name="reportConfidence.id" value=""/>
+						<input type="hidden" name="collateralDamagePotential.id" value=""/>
+						<input type="hidden" name="targetDistribution.id" value=""/>
+						<input type="hidden" name="confidentialityRequire.id" value=""/>
+						<input type="hidden" name="integrityRequire.id" value=""/>
+						<input type="hidden" name="availabilityRequire.id" value=""/>
+						<input type="submit" value="提交评分"/>
+					</form>
 				</div>
 			</div>
 
@@ -173,9 +236,25 @@
 $("a#yijishenhe").click(function(){$('div.content1').hide();$('div#yijishenhe').show();return false;});
 $("a#erjishenhe").click(function(){$('div.content1').hide();$('div#erjishenhe').show();return false;});
 $("a#sanjishenhe").click(function(){$('div.content1').hide();$('div#sanjishenhe').show();return false;});
-//隔行变色
+
 $(document).ready(function(){
+	//隔行变色
 	$("tr:even").css("background-color","#FFFFCC");
+	//补齐两位数
+	function padleft0(obj) {
+		return obj.toString().replace(/^[0-9]{1}$/, "0" + obj);
+	}
+	//初始化时间输入框
+	var d = new Date(),str = '';
+	str += d.getFullYear()+'-';
+	str += padleft0(d.getMonth()+1)+'-';
+	str += padleft0(d.getDate()-1);
+	$('input[name="storageTimeStartStr"]').val(str);
+	var d = new Date(),str = '';
+	str += d.getFullYear()+'-';
+	str += padleft0(d.getMonth()+1)+'-';
+	str += padleft0(d.getDate());
+	$('input[name="storageTimeEndStr"]').val(str);
 });
 
 function check_refresh(){

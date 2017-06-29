@@ -221,8 +221,8 @@ class BackEnd(htmlPy.Object):
 			'isg':'0',
 			'content':''
 		}
-		#response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
-		# print(response)
+		response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
+		print(response)
 		self.secondExamineList()
 
 	# 二级批量通过
@@ -239,8 +239,8 @@ class BackEnd(htmlPy.Object):
 				'isg': '0',
 				'content': ''
 			}
-			# response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
-			# print(response)
+			response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/secondExamineUpdate", payload)
+			print(response)
 			print('erji_updates:'+flawId)
 		self.secondExamineList()
 
@@ -248,6 +248,7 @@ class BackEnd(htmlPy.Object):
 	@htmlPy.Slot(str, result=str)
 	def thirdExamineList(self, json_str):
 		json_tab = json.loads(json_str)
+		print('sanjijiansuo:')
 		print(json_tab)
 		payload = {
 			'number' : '',
@@ -356,15 +357,15 @@ class BackEnd(htmlPy.Object):
 			template_dic['environmentalMetric_id'] = environmentalMetric_id
 			template_dic['freshId'] = freshId
 			##时间度量
-			template_dic['exploitability_id'] = exploitability_id
-			template_dic['remediationLevel_id'] = remediationLevel_id
-			template_dic['reportConfidence_id'] = reportConfidence_id
+			# template_dic['exploitability_id'] = exploitability_id
+			# template_dic['remediationLevel_id'] = remediationLevel_id
+			# template_dic['reportConfidence_id'] = reportConfidence_id
 			##环境度量
-			template_dic['collateralDamagePotential_id'] = collateralDamagePotential_id
-			template_dic['targetDistribution_id'] = targetDistribution_id
-			template_dic['confidentialityRequire_id'] = confidentialityRequire_id
-			template_dic['integrityRequire_id'] = integrityRequire_id
-			template_dic['availabilityRequire_id'] = availabilityRequire_id
+			# template_dic['collateralDamagePotential_id'] = collateralDamagePotential_id
+			# template_dic['targetDistribution_id'] = targetDistribution_id
+			# template_dic['confidentialityRequire_id'] = confidentialityRequire_id
+			# template_dic['integrityRequire_id'] = integrityRequire_id
+			# template_dic['availabilityRequire_id'] = availabilityRequire_id
 			self.app.template = ("index.html", template_dic)
 			##基本度量
 			def pushSelected(var,name):
@@ -379,6 +380,61 @@ class BackEnd(htmlPy.Object):
 			pushSelected(availabilityImpact_id, "availabilityImpact.id")
 			# 刷新js
 			self.app.evaluate_javascript("$('div#sanjishenhe').show();")
+
+	# 评分
+	@htmlPy.Slot(str, result=str)
+	def calScore(self, json_str):
+		json_tab = json.loads(json_str)
+		print(json_tab)
+		flawId = json_tab['flawId']
+		basemetric_id = json_tab['basemetric.id']
+		temporalMetric_id = json_tab['temporalMetric.id']
+		environmentalMetric_id = json_tab['environmentalMetric.id']
+		freshId = json_tab['freshId']
+		# 基本度量
+		accessVector_id = json_tab['accessVector.id']
+		accessComplexity_id = json_tab['accessComplexity.id']
+		authentication_id = json_tab['authentication.id']
+		confidentialityImpact_id = json_tab['confidentialityImpact.id']
+		integrityImpact_id = json_tab['integrityImpact.id']
+		availabilityImpact_id = json_tab['availabilityImpact.id']
+		# 时间度量
+		exploitability_id = json_tab['exploitability.id']
+		remediationLevel_id = json_tab['remediationLevel.id']
+		reportConfidence_id = json_tab['reportConfidence.id']
+		# 环境度量
+		collateralDamagePotential_id = json_tab['collateralDamagePotential.id']
+		targetDistribution_id = json_tab['targetDistribution.id']
+		confidentialityRequire_id = json_tab['confidentialityRequire.id']
+		integrityRequire_id = json_tab['integrityRequire.id']
+		availabilityRequire_id = json_tab['availabilityRequire.id']
+		payload = {
+			'flawId': flawId,
+			'basemetric.id': basemetric_id,
+			'temporalMetric.id': temporalMetric_id,
+			'environmentalMetric.id': environmentalMetric_id,
+			'freshId':freshId,
+			'accessVector.id': accessVector_id,
+			'accessComplexity.id': accessComplexity_id,
+			'authentication.id': authentication_id,
+			'confidentialityImpact.id': confidentialityImpact_id,
+			'integrityImpact.id': integrityImpact_id,
+			'availabilityImpact.id': availabilityImpact_id,
+			'exploitability.id': exploitability_id,
+			'remediationLevel.id': remediationLevel_id,
+			'reportConfidence.id': reportConfidence_id,
+			'collateralDamagePotential.id': collateralDamagePotential_id,
+			'targetDistribution.id': targetDistribution_id,
+			'confidentialityRequire.id': confidentialityRequire_id,
+			'integrityRequire.id': integrityRequire_id,
+			'availabilityRequire.id': availabilityRequire_id
+		}
+		print('pingfen:')
+		print(payload)
+		response = self.postQuery("http://202.108.212.74:8000/cnvd_admin/flaw/calScore", payload)
+		print(response)
+		# 刷新js
+		self.app.evaluate_javascript("$('input#sanjijiansuo').trigger('click');")
 
 
 

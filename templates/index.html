@@ -174,12 +174,12 @@
 					</table>
 				</div>
 				<div class="content3 left">
-					<form action="BackEnd.calScore">
-						<input type="text" name="flawId" value=""/>
-						<input type="hidden" name="basemetric.id" value=""  />
-						<input type="hidden" name="temporalMetric.id" value="" />
-						<input type="hidden" name="environmentalMetric.id" value="" />
-						<input type="hidden" name="freshId" value=""/>
+					<form action="BackEnd.calScore" data-bind="true">
+						<input type="text" name="flawId" value="{{ flawId }}"/>
+						<input type="hidden" name="basemetric.id" value="{{ basemetric_id }}"  />
+						<input type="hidden" name="temporalMetric.id" value="{{ temporalMetric_id }}" />
+						<input type="hidden" name="environmentalMetric.id" value="{{ environmentalMetric_id }}" />
+						<input type="hidden" name="freshId" value="{{ freshId }}"/>
 						攻击途径：
 						<select name="accessVector.id">
 							<option value="3" selected="selected">远程网络</option>
@@ -216,14 +216,14 @@
 							<option value="18">完全地</option>
 							<option value="17">部份地</option>
 						</select>
-						<input type="hidden" name="exploitability.id" value=""/>
-						<input type="hidden" name="remediationLevel.id" value=""/>
-						<input type="hidden" name="reportConfidence.id" value=""/>
-						<input type="hidden" name="collateralDamagePotential.id" value=""/>
-						<input type="hidden" name="targetDistribution.id" value=""/>
-						<input type="hidden" name="confidentialityRequire.id" value=""/>
-						<input type="hidden" name="integrityRequire.id" value=""/>
-						<input type="hidden" name="availabilityRequire.id" value=""/>
+						<input type="hidden" name="exploitability.id" value="{{ exploitability_id }}"/>
+						<input type="hidden" name="remediationLevel.id" value="{{ remediationLevel_id }}"/>
+						<input type="hidden" name="reportConfidence.id" value="{{ reportConfidence_id }}"/>
+						<input type="hidden" name="collateralDamagePotential.id" value="{{ collateralDamagePotential_id }}"/>
+						<input type="hidden" name="targetDistribution.id" value="{{ targetDistribution_id }}"/>
+						<input type="hidden" name="confidentialityRequire.id" value="{{ confidentialityRequire_id }}"/>
+						<input type="hidden" name="integrityRequire.id" value="{{ integrityRequire_id }}"/>
+						<input type="hidden" name="availabilityRequire.id" value="{{ availabilityRequire_id }}"/>
 						<input type="submit" value="提交评分"/>
 					</form>
 				</div>

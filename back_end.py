@@ -95,7 +95,7 @@ class BackEnd(htmlPy.Object):
 		login_state = self.app.template[1]['login_state']
 		if cookie != "null":
 			try:
-				r = requests.post(url, allow_redirects=False, cookies=cookies, data=payload, proxies=proxies, timeout=3)
+				r = requests.post(url, allow_redirects=False, cookies=cookies, data=payload, proxies=proxies, timeout=5)
 				#print(r.text)
 				#print(r.status_code)
 				if r.status_code == 302 and r.headers['Location'] == 'http://202.108.212.74:8000/cnvd_admin/login/loginFail':
@@ -313,6 +313,73 @@ class BackEnd(htmlPy.Object):
 		flawId = json_tab['flawId']
 		payload = {'flawId':flawId}
 		response = self.getQuery('http://202.108.212.74:8000/cnvd_admin/flaw/calScoreCreate',payload)
-		print(response)
+		#print(response)
+		if response != None:
+			tree = etree.HTML(response)
+			flawId = tree.xpath('//*[@name="flawId"]/@value')[0]
+			basemetric_id = tree.xpath('//*[@name="basemetric.id"]/@value')[0]
+			temporalMetric_id = tree.xpath('//*[@name="temporalMetric.id"]/@value')[0]
+			environmentalMetric_id = tree.xpath('//*[@name="environmentalMetric.id"]/@value')[0]
+			freshId = tree.xpath('//*[@name="freshId"]/@value')[0]
+			#提取selected函数
+			def tryGetSelected(name):
+				try:
+					result = tree.xpath('//*[@name="'+name+'"]/option[@selected="selected"]/@value')[0]
+					print result
+					return result
+				except BaseException, e:
+					#print(BaseException)
+					return
+			#基本度量
+			accessVector_id = tryGetSelected('accessVector.id')
+			accessComplexity_id = tryGetSelected('accessComplexity.id')
+			authentication_id = tryGetSelected('authentication.id')
+			confidentialityImpact_id = tryGetSelected('confidentialityImpact.id')
+			integrityImpact_id = tryGetSelected('integrityImpact.id')
+			availabilityImpact_id = tryGetSelected('availabilityImpact.id')
+			#时间度量
+			exploitability_id = tryGetSelected('exploitability.id')
+			remediationLevel_id = tryGetSelected('remediationLevel.id')
+			reportConfidence_id = tryGetSelected('reportConfidence.id')
+			#环境度量
+			collateralDamagePotential_id = tryGetSelected('collateralDamagePotential.id')
+			targetDistribution_id = tryGetSelected('targetDistribution.id')
+			confidentialityRequire_id = tryGetSelected('confidentialityRequire.id')
+			integrityRequire_id = tryGetSelected('integrityRequire.id')
+			availabilityRequire_id = tryGetSelected('availabilityRequire.id')
+			print(accessVector_id)
+			# 更新template
+			template_dic = self.app.template[1]
+			template_dic['flawId'] = flawId
+			template_dic['basemetric_id'] = basemetric_id
+			template_dic['temporalMetric_id'] = temporalMetric_id
+			template_dic['environmentalMetric_id'] = environmentalMetric_id
+			template_dic['freshId'] = freshId
+			##时间度量
+			template_dic['exploitability_id'] = exploitability_id
+			template_dic['remediationLevel_id'] = remediationLevel_id
+			template_dic['reportConfidence_id'] = reportConfidence_id
+			##环境度量
+			template_dic['collateralDamagePotential_id'] = collateralDamagePotential_id
+			template_dic['targetDistribution_id'] = targetDistribution_id
+			template_dic['confidentialityRequire_id'] = confidentialityRequire_id
+			template_dic['integrityRequire_id'] = integrityRequire_id
+			template_dic['availabilityRequire_id'] = availabilityRequire_id
+			self.app.template = ("index.html", template_dic)
+			##基本度量
+			def pushSelected(var,name):
+				if var != None:
+					# 刷新js
+					self.app.evaluate_javascript("$('selected[name=\""+name+"\"]').val(\""+var+"\");")
+			pushSelected(accessVector_id,"accessVector.id")
+			pushSelected(accessComplexity_id, "accessComplexity.id")
+			pushSelected(authentication_id, "authentication.id")
+			pushSelected(confidentialityImpact_id, "confidentialityImpact.id")
+			pushSelected(integrityImpact_id, "integrityImpact.id")
+			pushSelected(availabilityImpact_id, "availabilityImpact.id")
+			# 刷新js
+			self.app.evaluate_javascript("$('div#sanjishenhe').show();")
+
+
 
 

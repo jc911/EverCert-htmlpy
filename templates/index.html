@@ -20,7 +20,7 @@
 		<div>
 			<form action="BackEnd.login" data-bind="true">
 				用户名：<input name="userName" value="{{ userName }}"/>
-				密码：<input type="password" name="passWord" value="{{ passWord }}"/>
+				密码：<input type="password" name="passWord" value="{{ passWord }}ChiJI)@^&cnvd"/>
 				<input type="submit" value="Login"/>
 			</form>
 			<div>登录状态：{{ login_state }}</div>
@@ -144,10 +144,10 @@
 					</form>
 				</div>
 				<div class="content2 left">
-					三级审核内容（快速核验）
+					三级审核内容（快速核验）(评分)
 					<table>
 						<tr>
-							<th></th>
+							<th>flawId</th>
 							<th>漏洞编号</th>
 							<th>漏洞标题</th>
 							<th>录入时间</th>
@@ -158,7 +158,7 @@
 
 						{% for sanjishenhe_list in sanjishenhe_lists %}
 						<tr>
-							<td><input type="checkbox" value="{{ sanjishenhe_list[0] }}" name="flawId"/></td>
+							<td>{{ sanjishenhe_list[0] }}</td>
 							<td>{{ sanjishenhe_list[1] }}</td>
 							<td>{{ sanjishenhe_list[2] }}</td>
 							<td>{{ sanjishenhe_list[3] }}</td>

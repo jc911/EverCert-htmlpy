@@ -288,7 +288,10 @@ class BackEnd(htmlPy.Object):
 			lurushijian_list = tree.xpath('//*[@target="flawIds"]/td[8]/text()')
 			gongxianzhe_list = tree.xpath('//*[@target="flawIds"]/td[10]/text()')
 			pingfen_list = tree.xpath('//*[@target="flawIds"]/td[14]/text()')
+			pingfen_list = pingfen_list[::2]
 			sanjishenhe_lists = []
+			print(bianhao_list)
+			print(pingfen_list)
 			for i in range(len(bianhao_list)):
 				flawId = flawId_list[i].strip()
 				bianhao = bianhao_list[i].strip()
@@ -298,7 +301,8 @@ class BackEnd(htmlPy.Object):
 				pingfen = pingfen_list[i].strip()
 				sanjishenhe_list = [flawId,bianhao,biaoti,lurushijian,gongxianzhe,pingfen]
 				sanjishenhe_lists.append(sanjishenhe_list)
-				#print(flawId)
+				#print(bianhao)
+				#print(pingfen)
 			# 更新template
 			template_dic = self.app.template[1]
 			template_dic['sanjishenhe_lists'] = sanjishenhe_lists
@@ -371,7 +375,7 @@ class BackEnd(htmlPy.Object):
 			def pushSelected(var,name):
 				if var != None:
 					# 刷新js
-					self.app.evaluate_javascript("$('selected[name=\""+name+"\"]').val(\""+var+"\");")
+					self.app.evaluate_javascript("$('select[name=\""+name+"\"]').val(\""+var+"\");")
 			pushSelected(accessVector_id,"accessVector.id")
 			pushSelected(accessComplexity_id, "accessComplexity.id")
 			pushSelected(authentication_id, "authentication.id")
